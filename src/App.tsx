@@ -7,12 +7,16 @@ const graph = rawData as unknown as FileGraph;
 // ── tiny helpers ────────────────────────────────────────────────────────────
 const shortId = (id: string) => id.split('@')[0];
 
-function edgeColor(kind: Edge['kind']): string {
-  switch (kind) {
-    case 'call':  return 'text-blue-600';
-    case 'state': return 'text-amber-600';
-    case 'type':  return 'text-emerald-600';
-  }
+function edgeLabel(e: Edge): string {
+  if (e.kind === 'state') return e.stateAccess === 'write' ? 'WRITE' : 'READ';
+  return e.kind.toUpperCase();
+}
+
+function edgeColor(e: Edge): string {
+  if (e.kind === 'call')  return 'text-blue-600';
+  if (e.kind === 'type')  return 'text-emerald-600';
+  // state: write is red, read is amber
+  return e.stateAccess === 'write' ? 'text-red-600' : 'text-amber-600';
 }
 
 // ── tab registry ────────────────────────────────────────────────────────────
@@ -79,12 +83,12 @@ function ListsView() {
               key={`${e.from}-${e.to}-${e.kind}-${i}`}
               className="bg-white rounded px-3 py-2 border border-gray-200 font-mono text-sm"
             >
-              <span className={`text-xs font-medium mr-2 uppercase ${edgeColor(e.kind)}`}>
-                {e.kind}
+              <span className={`text-xs font-medium mr-2 ${edgeColor(e)}`}>
+                {edgeLabel(e)}
               </span>
               <span>{shortId(e.from)}</span>
               <span className="text-gray-400 mx-2">→</span>
-              <span>{shortId(e.to)}</span>
+              <span>{e.kind === 'state' ? e.to : shortId(e.to)}</span>
             </li>
           ))}
           {graph.edges.length === 0 && (

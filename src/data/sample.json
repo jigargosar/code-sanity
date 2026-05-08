@@ -1,6 +1,6 @@
 {
   "filePath": "C:\\Users\\jigar\\projects\\code-sanity\\samples\\messy.ts",
-  "extractedAt": "2026-05-08T02:31:50.731Z",
+  "extractedAt": "2026-05-08T08:49:39.532Z",
   "functions": [
     {
       "id": "fetchData@15",
@@ -253,18 +253,27 @@
     },
     {
       "from": "bumpCounter@59",
-      "to": "readCounter@67",
-      "kind": "state"
+      "to": "counter",
+      "kind": "state",
+      "stateAccess": "write"
     },
     {
-      "from": "bumpCounter@59",
-      "to": "resetCounter@63",
-      "kind": "state"
+      "from": "resetCounter@63",
+      "to": "counter",
+      "kind": "state",
+      "stateAccess": "write"
     },
     {
       "from": "readCounter@67",
-      "to": "resetCounter@63",
-      "kind": "state"
+      "to": "counter",
+      "kind": "state",
+      "stateAccess": "read"
+    },
+    {
+      "from": "recordSeen@71",
+      "to": "lastSeen",
+      "kind": "state",
+      "stateAccess": "write"
     }
   ],
   "moduleState": [

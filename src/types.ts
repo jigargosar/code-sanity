@@ -33,10 +33,16 @@ export interface FunctionNode {
 
 export type EdgeKind = 'call' | 'state' | 'type';
 
+// Present only on state edges — distinguishes a function writing a binding
+// from one reading it. Absent on call and type edges.
+export type StateAccess = 'read' | 'write';
+
 export interface Edge {
   from: FunctionId;
   to: FunctionId;
   kind: EdgeKind;
+  // Set on state edges only. Describes how `from` touches `to` (the binding name).
+  stateAccess?: StateAccess;
   // weight reserved for future use (e.g. number of call sites between A and B)
   weight?: number;
 }

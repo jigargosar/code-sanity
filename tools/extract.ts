@@ -31,6 +31,7 @@ import type {
   FunctionId,
   Edge,
   ModuleStateRef,
+  StateAccess,
 } from '../src/types.ts';
 
 // ── types internal to extraction ────────────────────────────────────────────
@@ -300,21 +301,20 @@ function findStateRefs(
     });
   }
 
-  // build state edges: pair of any two functions that both touch the same binding
+  // State edges: one edge per function→binding touch, labeled read or write.
+  // `to` is the binding name (not a FunctionId). The UI renders these as
+  // READ/WRITE rows, distinct from pairwise call edges.
   const edges: Edge[] = [];
   const seen = new Set<string>();
+  const addStateEdge = (fnId: FunctionId, binding: string, access: StateAccess) => {
+    const key = `${fnId}~${binding}~${access}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    edges.push({ from: fnId, to: binding, kind: 'state', stateAccess: access });
+  };
   for (const ref of state) {
-    const touchers = Array.from(new Set([...ref.readers, ...ref.writers])).sort();
-    for (let i = 0; i < touchers.length; i++) {
-      for (let j = i + 1; j < touchers.length; j++) {
-        const a = touchers[i];
-        const b = touchers[j];
-        const key = `${a}~${b}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        edges.push({ from: a, to: b, kind: 'state' });
-      }
-    }
+    for (const fnId of ref.writers) addStateEdge(fnId, ref.name, 'write');
+    for (const fnId of ref.readers) addStateEdge(fnId, ref.name, 'read');
   }
   return { state, edges };
 }
