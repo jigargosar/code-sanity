@@ -40,7 +40,7 @@ source file  ──►  tools/extract.ts  ──►  src/data/sample.json  ─�
 
 5. **Extractor heuristics are deliberately lossy.**
    1. Call edges match on identifier short-name (so `obj.foo()` matches any in-file function named `foo`). Lossy on overloads — good enough to see graph shape before investing in type resolution.
-   2. `maybePure` flags a function that doesn't reference any module-level non-function binding. Function calls are *not* considered. It's a "maybe" — no proof.
+   2. `maybePure` flags a function that doesn't reference any module-level non-function binding *directly*. Transitive impurity through callees is **not** tracked — a function whose body calls `bumpCounter()` is flagged pure even though `bumpCounter` writes module state. Direct-touch purity is a feature of the heuristic, not a bug to silently fix; tightening it changes what the flag means.
    3. `cyclomatic` counts branching keywords + `&&`/`||`/`??`. Approximate.
    4. When tightening a heuristic, document the assumption in a comment near it (existing code does this); don't silently change semantics.
 
@@ -58,3 +58,32 @@ Vite 6, React 18, TypeScript 5.6 strict, Tailwind CSS 4 (via `@tailwindcss/vite`
 2. The tab registry in `App.tsx` (`TABS` array + `TabId` union) is the one place to declare a new view. Toggle `built: true` only when the tab actually renders something.
 3. Function IDs are `name@startLine` (see `makeId` in `tools/extract.ts`). Methods are `Class.method@line`. The UI's `shortId` helper strips the `@line` suffix for display only — never for identity.
 4. Comments in this codebase explain *why* a heuristic is approximate or *what* a section is responsible for. Match that tone — don't add WHAT-comments.
+5. **`samples/messy.ts` is the canary.** Its named groups (A pipeline, B mutual recursion, C isolated utility, D shared-state-no-call group, E god function, F dead function) are wired so each extractor signal lights up at least one group. The thesis-validating moment specifically: `bumpCounter` / `resetCounter` / `readCounter` have **zero call edges between them** but **are coupled through `counter`** via state edges. Any rewrite that breaks this contrast breaks the demo of why the tool exists. Keep this in mind before "simplifying" the fixture or the state-edge logic.
+
+## Roadmap and constraints
+
+This section captures direction set across the design conversation in `docs/conversations/initial.md`. It is not a phase plan — pick the next move based on what's missing in practice. But the *constraints* in §"Layout constraints" below are hard and should not be relitigated without explicit input from the user.
+
+### What's done
+1. ts-morph extractor: per-fn metrics, call edges, state edges, module-state index with reader/writer split, direct-touch purity flag.
+2. React/Vite shell with the tab registry and a Lists view (3-column readout: functions / edges / module state).
+
+### What's open, roughly in payoff order
+1. **Graph view** — React Flow canvas, code-order vertical lane (Y bound to source line, X user-draggable), edges as bezier curves. Click a node → highlight transitive callers in one hue, transitive callees in another, with depth gradient. Sidebar shows the selected fn's metrics. This is the smallest move that converts the current JSON-viewer into the exploration tool the project was built for.
+2. **Layer toggle** — show/hide call vs state vs type edges independently. The diagnostic moment is watching apparently-isolated groups merge into one component as state layer turns on. This is the differentiator vs. every existing call-graph tool.
+3. **Type-touch edges** — third edge kind, already declared in `EdgeKind` (`'type'`) but not yet emitted. Walks function bodies via the ts-morph type checker and records type/symbol references.
+4. **Matrix / DSM view** — rows × columns of functions, cells shaded by edge presence/strength, reordered to surface diagonal blocks. Hairball-immune by construction; the right family for dense graphs.
+5. **Treemap view** — area = LOC, color = fan-in or fan-out. "Where is the mass and is it where the coupling is too?" in one chart.
+6. **Composite smell score** — rank-sum across metrics (LOC, cyclomatic, locals, args, fan-in, fan-out, purity); color the top decile. Multiple imperfect signals combined; the user's "every metric is a smell, multiple polls beat one" framing.
+7. **Articulation points** (Tarjan) — facade discovery, ~10 lines on top of the call graph. Highlight nodes whose removal disconnects a component.
+8. **Cycle highlighting** (Tarjan SCC) — call cycles are usually abstraction-boundary smells; isEven/isOdd in `samples/messy.ts` is the canary.
+9. **Pin-aware layouts** — pinned nodes are positional constraints that survive view switches. Every layout algorithm added must honor pins.
+10. **Series contraction** — collapse trivial A→B→C chains (B with in-degree 1, out-degree 1) into a glyph, expandable on click.
+11. **Counterfactual / API-surface delta** — select a subset of functions, compute what the extracted module's import list and original file's public surface become.
+12. **AI-generated report** — bolt-on consumer of the same `FileGraph`; ranks candidates by composite smell.
+
+### Layout constraints
+1. **No force-directed layout.** A small change destabilizes the whole graph; the user has explicitly rejected this. Code-order vertical lane is the default.
+2. **Pinning must survive view switches.** Don't add a layout algorithm that can't accept pinned nodes as positional constraints.
+3. **Cap visual channels at two per node** (e.g. area + color, or border + fill). Beyond two, the view becomes unreadable. Push everything else to the sidebar.
+4. **Don't pre-commit to phased plans the user didn't author.** Recommend the next move based on the current state of the tool, not a roadmap pretending to be a schedule. The list above is a parking lot, not a sequence.
