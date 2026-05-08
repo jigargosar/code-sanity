@@ -1,0 +1,289 @@
+{
+  "filePath": "C:\\Users\\jigar\\projects\\code-sanity\\samples\\messy.ts",
+  "extractedAt": "2026-05-08T02:31:50.731Z",
+  "functions": [
+    {
+      "id": "fetchData@15",
+      "name": "fetchData",
+      "startLine": 15,
+      "endLine": 20,
+      "loc": 6,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 2,
+      "nestingDepth": 1,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "parseData@22",
+      "name": "parseData",
+      "startLine": 22,
+      "endLine": 24,
+      "loc": 3,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "transformData@26",
+      "name": "transformData",
+      "startLine": 26,
+      "endLine": 34,
+      "loc": 9,
+      "argCount": 1,
+      "localCount": 2,
+      "cyclomatic": 3,
+      "nestingDepth": 2,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "pipeline@36",
+      "name": "pipeline",
+      "startLine": 36,
+      "endLine": 40,
+      "loc": 5,
+      "argCount": 1,
+      "localCount": 2,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "isEven@43",
+      "name": "isEven",
+      "startLine": 43,
+      "endLine": 46,
+      "loc": 4,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 2,
+      "nestingDepth": 1,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "isOdd@48",
+      "name": "isOdd",
+      "startLine": 48,
+      "endLine": 51,
+      "loc": 4,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 2,
+      "nestingDepth": 1,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "addOne@54",
+      "name": "addOne",
+      "startLine": 54,
+      "endLine": 56,
+      "loc": 3,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": true,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "bumpCounter@59",
+      "name": "bumpCounter",
+      "startLine": 59,
+      "endLine": 61,
+      "loc": 3,
+      "argCount": 0,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": false,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "resetCounter@63",
+      "name": "resetCounter",
+      "startLine": 63,
+      "endLine": 65,
+      "loc": 3,
+      "argCount": 0,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": false,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "readCounter@67",
+      "name": "readCounter",
+      "startLine": 67,
+      "endLine": 69,
+      "loc": 3,
+      "argCount": 0,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": false,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "recordSeen@71",
+      "name": "recordSeen",
+      "startLine": 71,
+      "endLine": 73,
+      "loc": 3,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": false,
+      "kind": "function",
+      "exported": false
+    },
+    {
+      "id": "doEverything@76",
+      "name": "doEverything",
+      "startLine": 76,
+      "endLine": 91,
+      "loc": 16,
+      "argCount": 0,
+      "localCount": 3,
+      "cyclomatic": 7,
+      "nestingDepth": 2,
+      "maybePure": true,
+      "kind": "function",
+      "exported": true
+    },
+    {
+      "id": "unusedHelper@94",
+      "name": "unusedHelper",
+      "startLine": 94,
+      "endLine": 96,
+      "loc": 3,
+      "argCount": 1,
+      "localCount": 0,
+      "cyclomatic": 1,
+      "nestingDepth": 0,
+      "maybePure": true,
+      "kind": "function",
+      "exported": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "pipeline@36",
+      "to": "fetchData@15",
+      "kind": "call"
+    },
+    {
+      "from": "pipeline@36",
+      "to": "parseData@22",
+      "kind": "call"
+    },
+    {
+      "from": "pipeline@36",
+      "to": "transformData@26",
+      "kind": "call"
+    },
+    {
+      "from": "isEven@43",
+      "to": "isOdd@48",
+      "kind": "call"
+    },
+    {
+      "from": "isOdd@48",
+      "to": "isEven@43",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "bumpCounter@59",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "recordSeen@71",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "addOne@54",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "readCounter@67",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "pipeline@36",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "isEven@43",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "resetCounter@63",
+      "kind": "call"
+    },
+    {
+      "from": "doEverything@76",
+      "to": "isOdd@48",
+      "kind": "call"
+    },
+    {
+      "from": "bumpCounter@59",
+      "to": "readCounter@67",
+      "kind": "state"
+    },
+    {
+      "from": "bumpCounter@59",
+      "to": "resetCounter@63",
+      "kind": "state"
+    },
+    {
+      "from": "readCounter@67",
+      "to": "resetCounter@63",
+      "kind": "state"
+    }
+  ],
+  "moduleState": [
+    {
+      "name": "counter",
+      "readers": [
+        "readCounter@67"
+      ],
+      "writers": [
+        "bumpCounter@59",
+        "resetCounter@63"
+      ]
+    },
+    {
+      "name": "lastSeen",
+      "readers": [],
+      "writers": [
+        "recordSeen@71"
+      ]
+    }
+  ]
+}
